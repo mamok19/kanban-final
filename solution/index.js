@@ -8,7 +8,7 @@ function saveToLocal (task){
     localStorage.task =JSON.stringify(Task);
 }
 
-function ReciveFromLocal(){
+function reciveFromLocal(){
     if(local.task !== undefined){
         const local = JSON.parse(localStorage.task)
         task.todo.push(local.todo)
@@ -36,6 +36,51 @@ function createElement(tagName, children = [], classes = [], attributes = {}) {
     }
     return Elemen
 }
-function CreateTaskElement () {
-    
+function createTaskElement (place , text) {
+    if (text){
+        const taskElement = createElement("li",[text], [])
+        taskElement.appendChild(createElement('h5',["done"]))
+        taskElement.appendChild(createElement('h5',['❌']))
+        switch (place){
+            case "todo":
+                document.getElementById("to-do").appendChild(taskElement)
+                break;
+            case "in-progress":
+                document.getElementById("in-progress-tasks").appendChild(taskElement)
+                break;
+            case "done":
+                document.getElementById("done-tasks").appendChild(taskElement)
+                break;
+            default:
+                alert ("wrong input")
+            }
+        }   
+    else{
+        alert ("you didnt write any task")
+    }
 }
+function presenTaskFromLocal(task){
+    for (const tas of task.todo){
+        createTaskElement("todo", tas)
+    }
+    for (const tas of task["in-progress"]){
+        createTaskElement("in-progress", tas)
+    }
+    for (const tas of task.done){
+        createTaskElement("done", tas)
+    }
+}
+function addTaskEventListner(event) {
+    switch(event.target.classList[0]){
+        case 'submit-add-to-do':
+            createTaskElement("todo", document.querySelector("body > section.to-do > input").value)
+            break;
+        case 'submit-add-in-progress':
+            createTaskElement("in-progress", document.querySelector("body > section.in-progress > input").value)
+            break;
+        case 'submit-add-done':
+            createTaskElement("done", document.querySelector("body > section.done > input").value)
+            break;
+        }
+    }
+document.addEventListener('click', addTaskEventListner);
