@@ -70,7 +70,7 @@ function presenTaskFromLocal(task){
         createTaskElement("done", tas)
     }
 }
-function addTaskEventListner(event) {
+function addClickEventListner(event) {
     switch(event.target.classList[0]){
         case 'submit-add-to-do':
             createTaskElement("todo", document.querySelector("body > section.to-do > input").value)
@@ -83,4 +83,21 @@ function addTaskEventListner(event) {
             break;
         }
     }
-document.addEventListener('click', addTaskEventListner);
+function DoubleClickEventListner(event){
+    event.target.setAttribute('contentEditable', true)
+    event.target.focus();
+}
+function keyUpEventListner(event){
+    if(event.altKey === true && event.key === 1){
+    }
+    if(event.altKey === true && event.key === 2){
+            
+    }
+    if(event.altKey === true && event.key === 3){
+            
+    }
+}
+document.addEventListener('click', addClickEventListner);
+document.getElementById("to-do").addEventListener('dblclick', DoubleClickEventListner);
+document.getElementById("in-progress-tasks").addEventListener('dblclick', DoubleClickEventListner);
+document.getElementById("done-tasks").addEventListener('dblclick', DoubleClickEventListner);
