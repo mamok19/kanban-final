@@ -88,16 +88,28 @@ function DoubleClickEventListner(event){
     event.target.focus();
 }
 function keyUpEventListner(event){
-    if(event.altKey === true && event.key === 1){
+    console.log(event)
+    if(event.altKey === true && event.key === '1'){
+        moveTask(event.target, "todo")  
     }
-    if(event.altKey === true && event.key === 2){
+    if( event.key === '2'){
+        if (event.relatedTarget.localName === 'li'){
+        moveTask(event.target.parentElement, event.target, "in-progress")
+        }
+    }
+    if(event.altKey === true && event.key === '3'){
             
     }
-    if(event.altKey === true && event.key === 3){
-            
-    }
+}
+function deleteElement(){
+
+}
+function moveTask(parent, task, place){
+    //createelemt ()
+    parent.removeChild(task)
 }
 document.addEventListener('click', addClickEventListner);
 document.getElementById("to-do").addEventListener('dblclick', DoubleClickEventListner);
 document.getElementById("in-progress-tasks").addEventListener('dblclick', DoubleClickEventListner);
 document.getElementById("done-tasks").addEventListener('dblclick', DoubleClickEventListner);
+document.getElementById("to-do").addEventListener('keydown', keyUpEventListner);
