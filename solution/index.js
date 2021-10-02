@@ -4,6 +4,7 @@ let task = {
     "done": []
 }
 let locationBeforeChange = ['', null];
+let ifTwice = false
 
 //functions
 
@@ -41,13 +42,12 @@ function createElement(tagName, children = [], classes = [], attributes = {}) {
 }
 function createTaskElement (place , text) {
     if (text){
-        if(!findNameOfTask(task, text)){
+        if(!findNameOfTask(text)){
+            ifTwice = false;
             task[place].push(text)
             saveToLocal(task)
             const taskElement = createElement("li",[], ['bigElement'])
             taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
-            taskElement.appendChild(createElement('h5',["done"],['parent']))
-            taskElement.appendChild(createElement('h5',['❌'],['parent']))
             taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
             taskElement.children[0].addEventListener('focusout', outOffocusEvent)
             taskElement.addEventListener('mouseenter', findSpecificLi);
@@ -67,7 +67,10 @@ function createTaskElement (place , text) {
             }
         }
         else{
-            alert ("task alrady exists")
+            if (ifTwice){
+                deleteFromTask(findNameOfTask(text))
+                createTaskElement(place, text)
+            }
         }
     }   
     else{
@@ -111,7 +114,7 @@ function addClickEventListner(event) {
         }
     }
 function DoubleClickEventListner(event){
-    locationBeforeChange = findNameOfTask(task, event.target.innerText)
+    locationBeforeChange = findNameOfTask(event.target.innerText)
     event.target.setAttribute('contentEditable', true)
     event.target.focus();
 }
@@ -126,15 +129,15 @@ function keyUpEventListner(event){
         moveTask(event.target.parentElement.parentElement,event.target.parentElement, "done")
     }
 }
-function deleteElement([place, index]){
-    task[place].splice(parseInt(index),1)
-}
-function moveTask(parent,spectask, place){
-    let location = findNameOfTask(task, spectask.children[0].innerText)
-    deleteElement(location)
+function moveTask(parent,spectask, place, location = (findNameOfTask(spectask.children[0].innerText))){
+    deleteFromTask(location)
+    ifTwice = true;
     createTaskElement(place, spectask.children[0].innerText)
     parent.removeChild(spectask)
     saveToLocal(task)
+}
+function deleteFromTask([place, index]){
+    task[place].splice(parseInt(index),1)
 }
 function findSpecificLi(event){
     event.target.parentNode.addEventListener('keydown', keyUpEventListner)
@@ -174,30 +177,30 @@ function searchByQuery(query) {
   function handleSearchEvent(event){
       searchByQuery(document.getElementById('search').value)
   }
-function findNameOfTask(task, name){
+function findNameOfTask(name){
     for (let names in task.todo){
         if(task.todo[names] === name){
-            return ["todo" , names]; 
+            return ["todo" , parseInt(names)]; 
         }
     }
     for (let names in task['in-progress']){
         if(task['in-progress'][names] === name){
-            return ["in-progress" , names]; 
+            return ["in-progress" , parseInt(names)]; 
         }
     }
     for (let names in task.done){
         if(task.done[names] === name){
-            return ["done" , names]; 
+            return ["done" , parseInt(names)]; 
         }
     }
 }
 // start if page
-if(localStorage.task === undefined){
+if(!localStorage.task){
     localStorage.task = JSON.stringify(task);
 }
 else {
     reciveFromLocal()
-    // presenTaskFromLocal(task);
+    presenTaskFromLocal(task);
 }
 document.addEventListener('click', addClickEventListner);
 document.getElementById('search').addEventListener('input', handleSearchEvent)
