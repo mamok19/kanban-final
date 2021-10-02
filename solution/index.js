@@ -1,7 +1,7 @@
 let task = {
-    "todo": [],
-    "in-progress": [],
-    "done": []
+    "todo": ['1'],
+    "in-progress": ['2'],
+    "done": ['3']
 }
 
 function saveToLocal (task){
@@ -110,24 +110,49 @@ function deleteElement(){
 
 }
 function moveTask(parent,task, place){
-    //createelemt ()
-    console.log(parent)
     parent.removeChild(task)
+    createTaskElement(place, task.children[0].innerText)
 }
 function findSpecificLi(event){
     event.target.parentNode.addEventListener('keydown', keyUpEventListner)
-    // if(event.fromElement.className){
-
-    //     // if (event.target.className === 'taskTitle'){
-    //     //     event.target.parentElement.parentElement.parentElement.addEventListener('keydown', keyUpEventListner)
-    //     // }
-    //     // else if (event.fromElement.className === "parent" || event.fromElement.className === "taskTitle"){
-    //     //     event.target.parentNode.parentNode.addEventListener('keydown', keyUpEventListner)
-    //     // }
-    // }
 }
 function removeSpecificLiEvent(event){
     event.target.removeEventListener('keyup', keyUpEventListner)
 }
+
+function searchByQuery(query) {
+    for (memo of document.getElementById('searchResults').children){
+        document.getElementById('searchResults').removeChild(memo)
+    }
+    let taskElement;
+        if(query){
+            for(let tasks of task.todo){
+                taskElement = createElement('li', ["to-do: ",tasks])
+                if(tasks.includes(query)){
+                    document.getElementById('searchResults').appendChild(taskElement)
+                }
+            }
+            for(let tasks of task["in-progress"]){
+                taskElement = createElement('li', ["in-progress: ", tasks])
+                if(tasks.includes((query))){
+                    document.getElementById('searchResults').appendChild(taskElement)
+                }
+
+            }
+            for(let tasks of task.done){
+                taskElement = createElement('li', ["done: ",tasks])
+                if(tasks.includes((query))){
+                    document.getElementById('searchResults').appendChild(taskElement)
+                }
+            }
+    }
+  }
+
+  function handleSearchEvent(event){
+      searchByQuery(document.getElementById('search').value)
+  }
+
+// start if page
 document.addEventListener('click', addClickEventListner);
+document.getElementById('search').addEventListener('input', handleSearchEvent)
 
