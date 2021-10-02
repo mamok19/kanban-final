@@ -38,14 +38,14 @@ function createElement(tagName, children = [], classes = [], attributes = {}) {
 }
 function createTaskElement (place , text) {
     if (text){
-        const taskElement = createElement("li",[], [])
+        const taskElement = createElement("li",[], ['bigElement'])
         taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
         taskElement.appendChild(createElement('h5',["done"],['parent']))
         taskElement.appendChild(createElement('h5',['❌'],['parent']))
         taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
         taskElement.children[0].addEventListener('focusout', outOffocusEvent)
-        taskElement.addEventListener('mouseover', findSpecificLi);
-        taskElement.addEventListener('mouseout', removeSpecificLiEvent);
+        taskElement.addEventListener('mouseenter', findSpecificLi);
+        // taskElement.addEventListener('mouseleave', removeSpecificLiEvent);
         switch (place){
             case "todo":
                 document.getElementById("to-do").appendChild(taskElement)
@@ -96,34 +96,35 @@ function DoubleClickEventListner(event){
     event.target.focus();
 }
 function keyUpEventListner(event){
-    console.log(event)
     if(event.altKey === true && event.key === '1'){
-        moveTask(event.target.parentElement, event.target, "todo")    
+        moveTask(event.target.parentElement.parentElement,event.target.parentElement, "todo")    
     }
     if(event.altKey === true && event.key === '2'){
-            console.log(event)
-            moveTask(event.target.parentElement, event.target, "in-progress")
+        moveTask(event.target.parentElement.parentElement,event.target.parentElement, "in-progress")
     }
     if(event.altKey === true && event.key === '3'){
-        moveTask(event.target.parentElement, event.target, "done")
+        moveTask(event.target.parentElement.parentElement,event.target.parentElement, "done")
     }
 }
 function deleteElement(){
 
 }
-function moveTask(parent, task, place){
+function moveTask(parent,task, place){
     //createelemt ()
+    console.log(parent)
     parent.removeChild(task)
 }
 function findSpecificLi(event){
-    if(event.fromElement.className){
-        if (event.target === 'li'){
-            event.target.addEventListener('keydown', keyUpEventListner)
-        }
-        else if (event.fromElement.className === "parent" || event.fromElement.className === "taskTitle"){
-            event.target.parentNode.addEventListener('keydown', keyUpEventListner)
-        }
-    }
+    event.target.parentNode.addEventListener('keydown', keyUpEventListner)
+    // if(event.fromElement.className){
+
+    //     // if (event.target.className === 'taskTitle'){
+    //     //     event.target.parentElement.parentElement.parentElement.addEventListener('keydown', keyUpEventListner)
+    //     // }
+    //     // else if (event.fromElement.className === "parent" || event.fromElement.className === "taskTitle"){
+    //     //     event.target.parentNode.parentNode.addEventListener('keydown', keyUpEventListner)
+    //     // }
+    // }
 }
 function removeSpecificLiEvent(event){
     event.target.removeEventListener('keyup', keyUpEventListner)
