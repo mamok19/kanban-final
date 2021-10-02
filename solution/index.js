@@ -40,8 +40,8 @@ function createTaskElement (place , text) {
     if (text){
         const taskElement = createElement("li",[], [])
         taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
-        taskElement.appendChild(createElement('h5',["done"]))
-        taskElement.appendChild(createElement('h5',['❌']))
+        taskElement.appendChild(createElement('h5',["done"],['parent']))
+        taskElement.appendChild(createElement('h5',['❌'],['parent']))
         taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
         taskElement.children[0].addEventListener('focusout', outOffocusEvent)
         taskElement.addEventListener('mouseover', findSpecificLi);
@@ -96,6 +96,7 @@ function DoubleClickEventListner(event){
     event.target.focus();
 }
 function keyUpEventListner(event){
+    console.log(event)
     if(event.altKey === true && event.key === '1'){
         moveTask(event.target.parentElement, event.target, "todo")    
     }
@@ -115,9 +116,13 @@ function moveTask(parent, task, place){
     parent.removeChild(task)
 }
 function findSpecificLi(event){
-    console.log(event)
-    if (event.target === 'li' || event.relatedTarget === 'li'){
-        event.target.addEventListener('keyup', keyUpEventListner)
+    if(event.fromElement.className){
+        if (event.target === 'li'){
+            event.target.addEventListener('keydown', keyUpEventListner)
+        }
+        else if (event.fromElement.className === "parent" || event.fromElement.className === "taskTitle"){
+            event.target.parentNode.addEventListener('keydown', keyUpEventListner)
+        }
     }
 }
 function removeSpecificLiEvent(event){
