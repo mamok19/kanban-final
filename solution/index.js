@@ -96,7 +96,6 @@ function DoubleClickEventListner(event){
     event.target.focus();
 }
 function keyUpEventListner(event){
-<<<<<<< HEAD
     if(event.altKey === true && event.key === '1'){
         moveTask(event.target.parentElement, event.target, "todo")    
     }
@@ -126,30 +125,3 @@ function removeSpecificLiEvent(event){
 }
 document.addEventListener('click', addClickEventListner);
 
-=======
-    console.log(event)
-    if(event.altKey === true && event.key === '1'){
-        moveTask(event.target, "todo")  
-    }
-    if( event.key === '2'){
-        if (event.relatedTarget.localName === 'li'){
-        moveTask(event.target.parentElement, event.target, "in-progress")
-        }
-    }
-    if(event.altKey === true && event.key === '3'){
-            
-    }
-}
-function deleteElement(){
-
-}
-function moveTask(parent, task, place){
-    //createelemt ()
-    parent.removeChild(task)
-}
-document.addEventListener('click', addClickEventListner);
-document.getElementById("to-do").addEventListener('dblclick', DoubleClickEventListner);
-document.getElementById("in-progress-tasks").addEventListener('dblclick', DoubleClickEventListner);
-document.getElementById("done-tasks").addEventListener('dblclick', DoubleClickEventListner);
-document.getElementById("to-do").addEventListener('keydown', keyUpEventListner);
->>>>>>> 15b8153182d38ed04b038e7ebf65cc6b3dae1dca
