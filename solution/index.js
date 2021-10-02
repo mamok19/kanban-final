@@ -38,9 +38,14 @@ function createElement(tagName, children = [], classes = [], attributes = {}) {
 }
 function createTaskElement (place , text) {
     if (text){
-        const taskElement = createElement("li",[text], [])
+        const taskElement = createElement("li",[], [])
+        taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
         taskElement.appendChild(createElement('h5',["done"]))
         taskElement.appendChild(createElement('h5',['❌']))
+        taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
+        taskElement.children[0].addEventListener('focusout', outOffocusEvent)
+        taskElement.addEventListener('mouseover', findSpecificLi);
+        taskElement.addEventListener('mouseout', removeSpecificLiEvent);
         switch (place){
             case "todo":
                 document.getElementById("to-do").appendChild(taskElement)
@@ -58,6 +63,9 @@ function createTaskElement (place , text) {
     else{
         alert ("you didnt write any task")
     }
+}
+function outOffocusEvent(event){
+    event.target.setAttribute('contentEditable', false)
 }
 function presenTaskFromLocal(task){
     for (const tas of task.todo){
@@ -88,16 +96,32 @@ function DoubleClickEventListner(event){
     event.target.focus();
 }
 function keyUpEventListner(event){
-    if(event.altKey === true && event.key === 1){
+    if(event.altKey === true && event.key === '1'){
+        moveTask(event.target.parentElement, event.target, "todo")    
     }
-    if(event.altKey === true && event.key === 2){
-            
+    if(event.altKey === true && event.key === '2'){
+            console.log(event)
+            moveTask(event.target.parentElement, event.target, "in-progress")
     }
-    if(event.altKey === true && event.key === 3){
-            
+    if(event.altKey === true && event.key === '3'){
+        moveTask(event.target.parentElement, event.target, "done")
     }
 }
+function deleteElement(){
+
+}
+function moveTask(parent, task, place){
+    //createelemt ()
+    parent.removeChild(task)
+}
+function findSpecificLi(event){
+    console.log(event)
+    if (event.target === 'li' || event.relatedTarget === 'li'){
+        event.target.addEventListener('keyup', keyUpEventListner)
+    }
+}
+function removeSpecificLiEvent(event){
+    event.target.removeEventListener('keyup', keyUpEventListner)
+}
 document.addEventListener('click', addClickEventListner);
-document.getElementById("to-do").addEventListener('dblclick', DoubleClickEventListner);
-document.getElementById("in-progress-tasks").addEventListener('dblclick', DoubleClickEventListner);
-document.getElementById("done-tasks").addEventListener('dblclick', DoubleClickEventListner);
+
