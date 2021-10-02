@@ -1,15 +1,18 @@
 let task = {
-    "todo": ['1'],
-    "in-progress": ['2'],
-    "done": ['3']
+    "todo": [],
+    "in-progress": [],
+    "done": []
 }
+let locationBeforeChange = ['', null];
+
+//functions
 
 function saveToLocal (task){
-    localStorage.task =JSON.stringify(Task);
+    localStorage.task =JSON.stringify(task);
 }
 
 function reciveFromLocal(){
-    if(local.task !== undefined){
+    if(localStorage.task !== undefined){
         const local = JSON.parse(localStorage.task)
         task.todo.push(local.todo)
         task["in-progress"].push(local["in-progress"])
@@ -38,37 +41,53 @@ function createElement(tagName, children = [], classes = [], attributes = {}) {
 }
 function createTaskElement (place , text) {
     if (text){
-        const taskElement = createElement("li",[], ['bigElement'])
-        taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
-        taskElement.appendChild(createElement('h5',["done"],['parent']))
-        taskElement.appendChild(createElement('h5',['❌'],['parent']))
-        taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
-        taskElement.children[0].addEventListener('focusout', outOffocusEvent)
-        taskElement.addEventListener('mouseenter', findSpecificLi);
-        // taskElement.addEventListener('mouseleave', removeSpecificLiEvent);
-        switch (place){
-            case "todo":
-                document.getElementById("to-do").appendChild(taskElement)
-                break;
-            case "in-progress":
-                document.getElementById("in-progress-tasks").appendChild(taskElement)
-                break;
-            case "done":
-                document.getElementById("done-tasks").appendChild(taskElement)
-                break;
-            default:
-                alert ("wrong input")
+        if(!findNameOfTask(task, text)){
+            task[place].push(text)
+            saveToLocal(task)
+            const taskElement = createElement("li",[], ['bigElement'])
+            taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
+            taskElement.appendChild(createElement('h5',["done"],['parent']))
+            taskElement.appendChild(createElement('h5',['❌'],['parent']))
+            taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
+            taskElement.children[0].addEventListener('focusout', outOffocusEvent)
+            taskElement.addEventListener('mouseenter', findSpecificLi);
+            taskElement.addEventListener('mouseleave', removeSpecificLiEvent);
+            switch (place){
+                case "todo":
+                    document.getElementById("to-do").appendChild(taskElement)
+                    break;
+                case "in-progress":
+                    document.getElementById("in-progress-tasks").appendChild(taskElement)
+                    break;
+                case "done":
+                    document.getElementById("done-tasks").appendChild(taskElement)
+                    break;
+                default:
+                    alert ("wrong input")
             }
-        }   
+        }
+        else{
+            alert ("task alrady exists")
+        }
+    }   
     else{
-        alert ("you didnt write any task")
+        alert ("you didnt write task property")
     }
 }
 function outOffocusEvent(event){
     event.target.setAttribute('contentEditable', false)
+    if (!event.target.innerText){
+        task[locationBeforeChange[0]].splice(parseInt(locationBeforeChange[1]), 1)
+        event.target.parentElement.parentElement.removeChild(event.target.parentElement)
+    }
+    else {
+        task[locationBeforeChange[0]][locationBeforeChange[1]] = event.target.innerText
+    }
+    saveToLocal(task)
 }
 function presenTaskFromLocal(task){
     for (const tas of task.todo){
+        console.log(tas)
         createTaskElement("todo", tas)
     }
     for (const tas of task["in-progress"]){
@@ -92,6 +111,7 @@ function addClickEventListner(event) {
         }
     }
 function DoubleClickEventListner(event){
+    locationBeforeChange = findNameOfTask(task, event.target.innerText)
     event.target.setAttribute('contentEditable', true)
     event.target.focus();
 }
@@ -106,18 +126,21 @@ function keyUpEventListner(event){
         moveTask(event.target.parentElement.parentElement,event.target.parentElement, "done")
     }
 }
-function deleteElement(){
-
+function deleteElement([place, index]){
+    task[place].splice(parseInt(index),1)
 }
-function moveTask(parent,task, place){
-    parent.removeChild(task)
-    createTaskElement(place, task.children[0].innerText)
+function moveTask(parent,spectask, place){
+    let location = findNameOfTask(task, spectask.children[0].innerText)
+    deleteElement(location)
+    createTaskElement(place, spectask.children[0].innerText)
+    parent.removeChild(spectask)
+    saveToLocal(task)
 }
 function findSpecificLi(event){
     event.target.parentNode.addEventListener('keydown', keyUpEventListner)
 }
 function removeSpecificLiEvent(event){
-    event.target.removeEventListener('keyup', keyUpEventListner)
+    event.target.removeEventListener('keydown', keyUpEventListner)
 }
 
 function searchByQuery(query) {
@@ -151,8 +174,31 @@ function searchByQuery(query) {
   function handleSearchEvent(event){
       searchByQuery(document.getElementById('search').value)
   }
-
+function findNameOfTask(task, name){
+    for (let names in task.todo){
+        if(task.todo[names] === name){
+            return ["todo" , names]; 
+        }
+    }
+    for (let names in task['in-progress']){
+        if(task['in-progress'][names] === name){
+            return ["in-progress" , names]; 
+        }
+    }
+    for (let names in task.done){
+        if(task.done[names] === name){
+            return ["done" , names]; 
+        }
+    }
+}
 // start if page
+if(localStorage.task === undefined){
+    localStorage.task = JSON.stringify(task);
+}
+else {
+    reciveFromLocal()
+    // presenTaskFromLocal(task);
+}
 document.addEventListener('click', addClickEventListner);
 document.getElementById('search').addEventListener('input', handleSearchEvent)
 
