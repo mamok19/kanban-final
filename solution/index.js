@@ -4,7 +4,6 @@ let task = {
     "done": []
 }
 let locationBeforeChange = ['', null];
-let ifTwice = false
 
 //functions
 
@@ -43,9 +42,8 @@ function createElement(tagName, children = [], classes = [], attributes = {}) {
 function createTaskElement (place , text) {
     if (text){
         if(!findNameOfTask(text)){
-            ifTwice = false;
             task[place].push(text)
-            saveToLocal(task)
+            // saveToLocal(task)
             const taskElement = createElement("li",[], ['bigElement'])
             taskElement.appendChild(createElement('h3', [text], ['taskTitle']))
             taskElement.children[0].addEventListener('dblclick', DoubleClickEventListner);
@@ -67,12 +65,9 @@ function createTaskElement (place , text) {
             }
         }
         else{
-            if (ifTwice){
-                deleteFromTask(findNameOfTask(text))
-                createTaskElement(place, text)
+            alert ("same task twice")
             }
-        }
-    }   
+        }  
     else{
         alert ("you didnt write task property")
     }
@@ -86,7 +81,7 @@ function outOffocusEvent(event){
     else {
         task[locationBeforeChange[0]][locationBeforeChange[1]] = event.target.innerText
     }
-    saveToLocal(task)
+    // saveToLocal(task)
 }
 function presenTaskFromLocal(task){
     for (const tas of task.todo){
@@ -119,22 +114,21 @@ function DoubleClickEventListner(event){
     event.target.focus();
 }
 function keyUpEventListner(event){
-    if(event.altKey === true && event.key === '1'){
+    if(event.ctrlKey === true && event.key === '1'){
         moveTask(event.target.parentElement.parentElement,event.target.parentElement, "todo")    
     }
-    if(event.altKey === true && event.key === '2'){
-        moveTask(event.target.parentElement.parentElement,event.target.parentElement, "in-progress")
+    if(event.ctrlKey === true && event.key === '2'){
+        moveTask( event.target.parentElement.parentElement,event.target.parentElement, "in-progress")
     }
-    if(event.altKey === true && event.key === '3'){
-        moveTask(event.target.parentElement.parentElement,event.target.parentElement, "done")
+    if(event.ctrlKey === true && event.key === '3'){
+        moveTask( event.target.parentElement.parentElement,event.target.parentElement, "done")
     }
 }
 function moveTask(parent,spectask, place, location = (findNameOfTask(spectask.children[0].innerText))){
     deleteFromTask(location)
-    ifTwice = true;
     createTaskElement(place, spectask.children[0].innerText)
     parent.removeChild(spectask)
-    saveToLocal(task)
+    // saveToLocal(task)
 }
 function deleteFromTask([place, index]){
     task[place].splice(parseInt(index),1)
@@ -199,8 +193,8 @@ if(!localStorage.task){
     localStorage.task = JSON.stringify(task);
 }
 else {
-    reciveFromLocal()
-    presenTaskFromLocal(task);
+    // reciveFromLocal()
+    // presenTaskFromLocal(task);
 }
 document.addEventListener('click', addClickEventListner);
 document.getElementById('search').addEventListener('input', handleSearchEvent)
